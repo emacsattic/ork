@@ -85,11 +85,26 @@ don't evaluate it."
       (ork-save-kmu-define-keys))))
 
 (defun ork-save-kmu-define-keys ()
-  (save-kmu-define-keys
+  (ork-save-kmu-define-keys-1
    (concat (file-name-sans-extension buffer-file-name) ".el")
    (ork-entry-get-symbol "mapvar")
    (ork-entry-get-symbol "feature")
    (ork--orgtbl->diff-descs)))
+
+(defun ork-save-kmu-define-keys-1 (file mapvar feature bindings)
+  (with-current-buffer (find-file-noselect file)
+    (widen)
+    (if (re-search-forward (format "^(kmu-define-keys %s "
+                                   (ork-entry-get-symbol "mapvar"))
+                           nil t)
+        (progn (beginning-of-line)
+               (delete-region (point) (progn (end-of-defun) (point))))
+      (goto-char (point-max)))
+    (when bindings
+      (insert (format "(kmu-define-keys %s %s" mapvar feature))
+      (--each bindings
+        (insert (format "\n  %S %s" (car it) (cadr it))))
+      (insert ")\n"))))
 
 (defun ork-tangle-all-custom-bindings (&optional purge)
   "Tangle bindings of all keymap variables in the current buffer.
@@ -123,7 +138,7 @@ sessions use `ork-revert-custom-bindings' instead."
     (ork-goto-mapvar-table)
     (ork-goto-mapvar)
     (org-toggle-tag "disabled" 'on)
-    (save-kmu-define-keys
+    (ork-save-kmu-define-keys-1
      (concat (file-name-sans-extension buffer-file-name) ".el")
      (ork-entry-get-symbol "mapvar")
      nil nil)))
