@@ -1,9 +1,11 @@
 ;;; ork.el --- edit keymaps as Org tables
 
-;; Copyright (C) 2012  Jonas Bernoulli
+;; Copyright (C) 2012-2015  Jonas Bernoulli
 
 ;; Author: Jonas Bernoulli <jonas@bernoul.li>
+;; Package-Requires: ((emacs "25.0.50") (keymap-utils "0.5.1") (org "8.3.1"))
 ;; Homepage: https://github.com/tarsius/ork
+;; Keywords: bindings org
 
 ;; This file is not part of Org.
 ;; This file is not part of GNU Emacs.
@@ -158,7 +160,7 @@ Also disable custom bindings for future sessions."
     (org-todo "TODO")
     (insert name)
     (org-set-property "mapvar" name)
-    (show-entry)
+    (outline-show-entry)
     (org-toggle-tag "disabled" 'on)
     (re-search-forward org-property-end-re)
     (ork-update-mapvar-section 'insert)))
@@ -330,7 +332,7 @@ Update the mapvar properties and table."
          (kill-local-variable 'org-emph-re)
          (kill-local-variable 'org-verbatim-re)
          (kill-local-variable 'org-emphasis-regexp-components)))
-  (font-lock-fontify-buffer))
+  (font-lock-ensure))
 
 ;;; Utilities
 
