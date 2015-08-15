@@ -332,7 +332,7 @@ Update the mapvar properties and table."
          (kill-local-variable 'org-emph-re)
          (kill-local-variable 'org-verbatim-re)
          (kill-local-variable 'org-emphasis-regexp-components)))
-  (font-lock-ensure))
+  (font-lock-flush))
 
 ;;; Utilities
 
